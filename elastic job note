@@ -1,0 +1,21 @@
+1.	Create elastic job agent on a separate server – you gonna choose a database that hosts the job agent. E.g. Admin-JobAgentHost
+
+2.	Create database scoped credentials in the job database (Admin-JobAgentHost)
+•	refresh_credential – to refresh metadata (e.g. new database is added to a server, then the job will include that new database automatically by refreshing metadata using this credential as long as the database is explicitly excluded)
+•	job_credential– runs a job in the target database server 
+
+3.	Add these 2 creds as a login and user in the master database of the target servers. 
+CREATE LOGIN refresh_credential WITH PASSWORD=''
+CREATE LOGIN job_credential WITH PASSWORD=''
+CREATE USER refresh_credential FROM LOGIN refresh_credential
+CREATE USER job_credential FROM LOGIN job_credential
+
+4.	Create a user for job execution credential in each target database and give it permissions like ddladmin
+"CREATE USER job_credential FROM LOGIN job_credential;"
+ "ALTER ROLE db_ddladmin ADD MEMBER [job_credential];"
+
+5.	Add target group, include or exclude databases
+6.	Add job , execute the job
+
+
+
